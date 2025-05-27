@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: WhatsApp Bot using AWS Lambda and Twilio Webhooks
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 10
+    Architectures: [arm64]
+    Handler: handler.handler
+
+Resources:
+  WhatsAppBotFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: whatsapp-bot-lambda
+      CodeUri: dist/
+      Events:
+        HttpApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /whatsapp
+            Method: POST
+
+Outputs:
+  BotUrl:
+    Description: "URL del webhook del bot"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/whatsapp"
